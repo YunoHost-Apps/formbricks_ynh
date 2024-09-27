@@ -16,6 +16,8 @@ Hij mag NIET handmatig aangepast worden.
 
 ## Overzicht
 
+Formbricks is a privacy-first XM Suite built on the largest open source survey platform worldwide. 
+
 ### Features
 
 - Create conversion-optimized surveys with our no-code editor with several question types.
