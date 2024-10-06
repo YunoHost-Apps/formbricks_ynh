@@ -31,10 +31,23 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression "Updating $app's configuration files..."
 
-ynh_config_add --template="some_config_file" --destination="$install_dir/some_config_file"
+ynh_config_add --template=".env" --destination="$install_dir/.env"
 
-chmod 400 "$install_dir/some_config_file"
-chown "$app:$app" "$install_dir/some_config_file"
+chmod 400 "$install_dir/.env"
+chown "$app:$app" "$install_dir/.env"
+
+#=================================================
+# INSTALL FORMBRICKS
+#=================================================
+ynh_script_progression "Installing the app..."
+
+pushd $install_dir
+    ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
+    ynh_hide_warnings ynh_exec_as_app pnpm install
+    ynh_hide_warnings ynh_exec_as_app pnpm build  
+popd
+
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
@@ -45,7 +58,7 @@ ynh_config_add_nginx
 
 ynh_config_add_systemd
 
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="Survey Platform" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE

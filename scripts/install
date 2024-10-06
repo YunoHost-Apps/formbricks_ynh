@@ -10,7 +10,7 @@ source /usr/share/yunohost/helpers
 key=$(ynh_string_random --length=32)
 cron_secret=$(ynh_string_random --length=32)
 ynh_app_setting_set --key=key --value=$key
-ynh_app_setting_set --key=_cron --value=$_cron
+ynh_app_setting_set --key=_cron --value=$cron_secret
 
 #=================================================
 # INSTALL DEPENDENCIES
@@ -35,9 +35,6 @@ ynh_script_progression "Adding $app's configuration files..."
 
 ynh_config_add --template=".env" --destination="$install_dir/.env"
 
-chmod 400 "$install_dir/.env"
-chown "$app:$app" "$install_dir/.env"
-
 #=================================================
 # INSTALL FORMBRICKS
 #=================================================
@@ -45,9 +42,11 @@ ynh_script_progression "Installing the app..."
 
 pushd $install_dir
     ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
-    ynh_hide_warnings pnpm install
-    ynh_hide_warnings pnpm build  
+    ynh_hide_warnings ynh_exec_as_app pnpm install
+    ynh_hide_warnings ynh_exec_as_app pnpm build  
 popd
+
+chown -R "$app:" "$install_dir"
 
 #=================================================
 # SYSTEM CONFIGURATION
@@ -58,7 +57,7 @@ ynh_config_add_nginx
 
 ynh_config_add_systemd
 
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="Survey Platform" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
