@@ -26,7 +26,16 @@ ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
 
-chown -R "$app:www-data" "$install_dir"
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Adding system configurations related to $app..."
+
+ynh_config_add_nginx
+
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="Survey Platform" --log="/var/log/$app/$app.log"
 
 #=================================================
 # APP INITIAL CONFIGURATION
@@ -38,26 +47,15 @@ ynh_config_add --template=".env" --destination="$install_dir/.env"
 #=================================================
 # INSTALL FORMBRICKS
 #=================================================
-ynh_script_progression "Installing the app..."
+ynh_script_progression "Installing $app..."
 
 pushd $install_dir
     ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
-    ynh_hide_warnings ynh_exec_as_app pnpm install
-    ynh_hide_warnings ynh_exec_as_app pnpm build  
+    ynh_hide_warnings ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install
+    ynh_hide_warnings ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm build  
 popd
 
-chown -R "$app:" "$install_dir"
-
-#=================================================
-# SYSTEM CONFIGURATION
-#=================================================
-ynh_script_progression "Adding system configurations related to $app..."
-
-ynh_config_add_nginx
-
-ynh_config_add_systemd
-
-yunohost service add "$app" --description="Survey Platform" --log="/var/log/$app/$app.log"
+chown -R "$app:$app" "$install_dir"
 
 #=================================================
 # START SYSTEMD SERVICE
