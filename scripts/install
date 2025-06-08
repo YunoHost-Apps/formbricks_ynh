@@ -18,6 +18,7 @@ ynh_app_setting_set --key=cron --value=$cron_secret
 ynh_script_progression "Installing dependencies..."
 
 ynh_nodejs_install
+ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -50,10 +51,10 @@ ynh_config_add --template=".env" --destination="$install_dir/.env"
 ynh_script_progression "Installing $app..."
 
 pushd $install_dir
-    #ynh_hide_warnings 
-    ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
-    ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install
-    ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm build  
+    ynh_exec_as_app pnpm install
+    ynh_exec_as_app pnpm build
+    #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install
+    #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm build  
 popd
 
 chown -R "$app:$app" "$install_dir"
