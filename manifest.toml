@@ -64,7 +64,7 @@ ram.runtime = "50M"
     cubejs.default=4000
 
     [resources.apt]
-    packages = "postgresql"
+    packages = "postgresql, redis-server"
 
     [resources.database]
     type = "postgresql"
