@@ -60,6 +60,8 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.ports]
+    main.default=3000
+    cubejs.default=4000
 
     [resources.apt]
     packages = "postgresql"
