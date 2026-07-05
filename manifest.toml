@@ -44,7 +44,7 @@ ram.runtime = "50M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://github.com/formbricks/formbricks/archive/refs/tags/v5.1.2.tar.gz"
+    url = "https://github.com/formbricks/formbricks/archive/refs/tags/5.1.2.tar.gz"
     sha256 = "77a78dda130ac21b44affe15d2f8218ed7f18f75b6d083134545a329d65465ca"
 
     # autoupdate.strategy = "latest_github_tag"
