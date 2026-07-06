@@ -7,7 +7,7 @@ name = "Formbricks"
 description.en = "Survey Platform"
 description.fr = "Plateforme d'enquête"
 
-version = "5.1.2~ynh1"
+version = "5.1.4~ynh1"
 
 maintainers = ["eric_G"]
 
@@ -44,8 +44,8 @@ ram.runtime = "50M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://github.com/formbricks/formbricks/archive/refs/tags/5.1.2.tar.gz"
-    sha256 = "77a78dda130ac21b44affe15d2f8218ed7f18f75b6d083134545a329d65465ca"
+    url = "https://github.com/formbricks/formbricks/archive/refs/tags/5.1.4.tar.gz"
+    sha256 = "bc112f2a95edf06c440a68459f434012aa989e8fd8f702887a178323667dad10"
 
     # autoupdate.strategy = "latest_github_tag"
 
