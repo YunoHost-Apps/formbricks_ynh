@@ -52,9 +52,7 @@ pushd $install_dir
     ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS vector;"
     ynh_exec_as_app pnpm install
     ynh_exec_as_app --max-old-size=8192 TURBO_TELEMETRY_DISABLED=1 pnpm build
-    ynh_exec_as_app pnpm turbo run db:setup
-    #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install
-    #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm build  
+    ynh_exec_as_app TURBO_TELEMETRY_DISABLED=1 pnpm turbo run db:setup
 popd
 
 chown -R "$app:$app" "$install_dir"
