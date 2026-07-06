@@ -6,10 +6,14 @@ source /usr/share/yunohost/helpers
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-key=$(ynh_string_random --length=32)
+encryption_key=$(ynh_string_random --length=32)
+nextauth_secret=$(ynh_string_random --length=32)
 cron_secret=$(ynh_string_random --length=32)
-ynh_app_setting_set --key=key --value=$key
-ynh_app_setting_set --key=cron --value=$cron_secret
+cubejs_api_secret=$(ynh_string_random --length=32)
+ynh_app_setting_set --key=encryption_key --value=$encryption_key
+ynh_app_setting_set --key=nextauth_secret --value=$nextauth_secret
+ynh_app_setting_set --key=cron_secret --value=$cron_secret
+ynh_app_setting_set --key=cubejs_api_secret --value=$cubejs_api_secret
 
 #=================================================
 # INSTALL DEPENDENCIES
