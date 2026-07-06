@@ -51,6 +51,7 @@ ynh_script_progression "Installing $app..."
 pushd $install_dir
     ynh_exec_as_app pnpm install
     ynh_exec_as_app --max-old-size=8192 TURBO_TELEMETRY_DISABLED=1 pnpm build
+    ynh_exec_as_app pnpm turbo run db:setup
     #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install
     #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm build  
 popd
