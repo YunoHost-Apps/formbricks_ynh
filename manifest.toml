@@ -64,7 +64,25 @@ ram.runtime = "50M"
     cubejs.default=4000
 
     [resources.apt]
-    packages = "postgresql, redis-server"
+    packages = [
+        "postgresql",
+        "redis-server"
+    ]
+    packages_from_raw_bash = """
+        if [[ $YNH_DEBIAN_VERSION == "trixie" ]]; then
+            echo "postgresql-17-pgvector";
+        fi
+    """
+
+    [resources.apt.extras.postgresql]
+    repo = "deb https://apt.postgresql.org/pub/repos/apt __YNH_DEBIAN_VERSION__-pgdg main"
+    key = "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    packages_from_raw_bash = """
+        if [[ $YNH_DEBIAN_VERSION == "bookworm" ]]; then
+            echo "postgresql-15-pgvector";
+        else echo "";
+        fi
+    """
 
     [resources.database]
     type = "postgresql"
