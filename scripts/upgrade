@@ -48,6 +48,7 @@ pushd $install_dir
     ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
     ynh_hide_warnings ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install
     ynh_hide_warnings ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm build  
+    ynh_exec_as_app pnpm turbo run db:setup
 popd
 
 chown -R "$app:$app" "$install_dir"
