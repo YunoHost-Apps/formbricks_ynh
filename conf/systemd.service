@@ -10,7 +10,7 @@ EnvironmentFile="__INSTALL_DIR__/.env"
 Environment="PATH=__PATH_WITH_NODEJS__"
 Environment="NODE_ENV=production"
 WorkingDirectory=__INSTALL_DIR__/
-ExecStart=__NODEJS_DIR__/pnpm turbo run start
+ExecStart=__NODEJS_DIR__/pnpm run start
 Restart=on-failure
 
 # Sandboxing options to harden security
