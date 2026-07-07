@@ -16,19 +16,19 @@ ynh_app_setting_set --key=cron_secret --value=$cron_secret
 ynh_app_setting_set --key=cubejs_api_secret --value=$cubejs_api_secret
 
 #=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression "Setting up source files..."
+
+ynh_setup_source --dest_dir="$install_dir"
+
+#=================================================
 # INSTALL DEPENDENCIES
 #=================================================
 ynh_script_progression "Installing dependencies..."
 
 PNPM_VERSION=$(sed -n 's/.*"packageManager":\s*"pnpm@\([^"]*\)".*/\1/p' $install_dir/package.json)
 ynh_hide_warnings corepack enable && corepack prepare pnpm@{PNPM_VERSION} --activate
-
-#=================================================
-# DOWNLOAD, CHECK AND UNPACK SOURCE
-#=================================================
-ynh_script_progression "Setting up source files..."
-
-ynh_setup_source --dest_dir="$install_dir"
 
 #=================================================
 # SYSTEM CONFIGURATION
