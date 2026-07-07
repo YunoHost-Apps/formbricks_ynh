@@ -28,7 +28,7 @@ ynh_setup_source --dest_dir="$install_dir"
 ynh_script_progression "Installing dependencies..."
 
 PNPM_VERSION=$(sed -n 's/.*"packageManager":\s*"pnpm@\([^"]*\)".*/\1/p' $install_dir/package.json)
-ynh_hide_warnings corepack enable && corepack prepare pnpm@{PNPM_VERSION} --activate
+ynh_hide_warnings corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 #=================================================
 # SYSTEM CONFIGURATION
