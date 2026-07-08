@@ -20,10 +20,10 @@ ynh_config_change_url_nginx
 # SPECIFIC MODIFICATIONS
 #=================================================
 
-encryption_key=$(ynh_app_setting_set --key=encryption_key)
-nextauth_secret=$(ynh_app_setting_set --key=nextauth_secret)
-cron_secret=$(ynh_app_setting_set --key=cron_secret)
-cubejs_api_secret=$(ynh_app_setting_set --key=cubejs_api_secret)
+encryption_key=$(ynh_app_setting_get --key=encryption_key)
+nextauth_secret=$(ynh_app_setting_get --key=nextauth_secret)
+cron_secret=$(ynh_app_setting_get --key=cron_secret)
+cubejs_api_secret=$(ynh_app_setting_get --key=cubejs_api_secret)
 
 ynh_config_add --template=".env" --destination="$install_dir/.env"
 
