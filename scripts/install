@@ -1,24 +1,19 @@
 #!/bin/bash
 
-source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-key=$(ynh_string_random --length=32)
+encryption_key=$(ynh_string_random --length=32)
+nextauth_secret=$(ynh_string_random --length=32)
 cron_secret=$(ynh_string_random --length=32)
-ynh_app_setting_set --key=key --value=$key
-ynh_app_setting_set --key=cron --value=$cron_secret
-
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression "Installing dependencies..."
-
-ynh_nodejs_install
-ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
+cubejs_api_secret=$(ynh_string_random --length=32)
+ynh_app_setting_set --key=encryption_key --value=$encryption_key
+ynh_app_setting_set --key=nextauth_secret --value=$nextauth_secret
+ynh_app_setting_set --key=cron_secret --value=$cron_secret
+ynh_app_setting_set --key=cubejs_api_secret --value=$cubejs_api_secret
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -26,6 +21,15 @@ ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
 ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
+
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression "Installing dependencies..."
+
+#PNPM_VERSION=$(sed -n 's/.*"packageManager":\s*"pnpm@\([^"]*\)".*/\1/p' $install_dir/package.json)
+#ynh_hide_warnings corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
 
 #=================================================
 # SYSTEM CONFIGURATION
@@ -51,10 +55,10 @@ ynh_config_add --template=".env" --destination="$install_dir/.env"
 ynh_script_progression "Installing $app..."
 
 pushd $install_dir
+    ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS vector;"
     ynh_exec_as_app pnpm install
-    ynh_exec_as_app pnpm build
-    #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install
-    #ynh_exec_as_app COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm build  
+    ynh_exec_as_app --max-old-size=8192 TURBO_TELEMETRY_DISABLED=1 pnpm build
+    ynh_exec_as_app TURBO_TELEMETRY_DISABLED=1 pnpm turbo run db:setup
 popd
 
 chown -R "$app:$app" "$install_dir"

@@ -7,7 +7,7 @@ name = "Formbricks"
 description.en = "Survey Platform"
 description.fr = "Plateforme d'enquête"
 
-version = "3.14.0~ynh1"
+version = "5.1.4~ynh1"
 
 maintainers = ["eric_G"]
 
@@ -21,7 +21,7 @@ code = "https://github.com/formbricks/formbricks"
 yunohost = ">= 12.0.9"
 helpers_version = "2.1"
 architectures = "all"
-multi_instance = true
+multi_instance = false
 
 ldap = false
 
@@ -44,8 +44,8 @@ ram.runtime = "50M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://github.com/formbricks/formbricks/archive/refs/tags/v3.14.0.tar.gz"
-    sha256 = "090f19eabfd4701a0d3ad4a319ca05bfa0b4744b07b837ed3c87924702994b4e"
+    url = "https://github.com/formbricks/formbricks/archive/refs/tags/5.1.4.tar.gz"
+    sha256 = "bc112f2a95edf06c440a68459f434012aa989e8fd8f702887a178323667dad10"
 
     # autoupdate.strategy = "latest_github_tag"
 
@@ -60,9 +60,32 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.ports]
+    main.default=3000
+    cubejs.default=4000
 
     [resources.apt]
-    packages = "postgresql"
+    packages = [
+        "postgresql",
+        "redis-server"
+    ]
+    packages_from_raw_bash = """
+        if [[ $YNH_DEBIAN_VERSION == "trixie" ]]; then
+            echo "postgresql-17-pgvector";
+        fi
+    """
+
+    [resources.apt.extras.postgresql]
+    repo = "deb https://apt.postgresql.org/pub/repos/apt __YNH_DEBIAN_VERSION__-pgdg main"
+    key = "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    packages_from_raw_bash = """
+        if [[ $YNH_DEBIAN_VERSION == "bookworm" ]]; then
+            echo "postgresql-15-pgvector";
+        else echo "";
+        fi
+    """
 
     [resources.database]
     type = "postgresql"
+
+    [resources.nodejs]
+    version = "24"

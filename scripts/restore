@@ -1,6 +1,5 @@
 #!/bin/bash
 
-source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -11,6 +10,12 @@ ynh_script_progression "Restoring the app main directory..."
 ynh_restore "$install_dir"
 
 chown -R "$app:www-data" "$install_dir"
+
+ynh_script_progression "Reinstalling pnpm..."
+
+#PNPM_VERSION=$(sed -n 's/.*"packageManager":\s*"pnpm@\([^"]*\)".*/\1/p' $install_dir/package.json)
+#ynh_hide_warnings corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
 
 #=================================================
 # RESTORE THE DATA DIRECTORY
