@@ -1,23 +1,19 @@
 #!/bin/bash
 
-source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-key=$(ynh_string_random --length=32)
+encryption_key=$(ynh_string_random --length=32)
+nextauth_secret=$(ynh_string_random --length=32)
 cron_secret=$(ynh_string_random --length=32)
-ynh_app_setting_set --key=key --value=$key
-ynh_app_setting_set --key=_cron --value=$_cron
-
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression "Installing dependencies..."
-
-ynh_nodejs_install
+cubejs_api_secret=$(ynh_string_random --length=32)
+ynh_app_setting_set --key=encryption_key --value=$encryption_key
+ynh_app_setting_set --key=nextauth_secret --value=$nextauth_secret
+ynh_app_setting_set --key=cron_secret --value=$cron_secret
+ynh_app_setting_set --key=cubejs_api_secret --value=$cubejs_api_secret
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -26,28 +22,14 @@ ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
 
-chown -R "$app:www-data" "$install_dir"
-
 #=================================================
-# APP INITIAL CONFIGURATION
+# INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression "Adding $app's configuration files..."
+ynh_script_progression "Installing dependencies..."
 
-ynh_config_add --template=".env" --destination="$install_dir/.env"
-
-chmod 400 "$install_dir/.env"
-chown "$app:$app" "$install_dir/.env"
-
-#=================================================
-# INSTALL FORMBRICKS
-#=================================================
-ynh_script_progression "Installing the app..."
-
-pushd $install_dir
-    ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
-    ynh_hide_warnings pnpm install
-    ynh_hide_warnings pnpm build  
-popd
+#PNPM_VERSION=$(sed -n 's/.*"packageManager":\s*"pnpm@\([^"]*\)".*/\1/p' $install_dir/package.json)
+#ynh_hide_warnings corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+ynh_hide_warnings corepack enable && corepack prepare pnpm@latest --activate
 
 #=================================================
 # SYSTEM CONFIGURATION
@@ -58,7 +40,28 @@ ynh_config_add_nginx
 
 ynh_config_add_systemd
 
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="Survey Platform" --log="/var/log/$app/$app.log"
+
+#=================================================
+# APP INITIAL CONFIGURATION
+#=================================================
+ynh_script_progression "Adding $app's configuration files..."
+
+ynh_config_add --template=".env" --destination="$install_dir/.env"
+
+#=================================================
+# INSTALL FORMBRICKS
+#=================================================
+ynh_script_progression "Installing $app..."
+
+pushd $install_dir
+    ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS vector;"
+    ynh_exec_as_app pnpm install
+    ynh_exec_as_app --max-old-size=8192 TURBO_TELEMETRY_DISABLED=1 pnpm build
+    ynh_exec_as_app TURBO_TELEMETRY_DISABLED=1 pnpm turbo run db:setup
+popd
+
+chown -R "$app:$app" "$install_dir"
 
 #=================================================
 # START SYSTEMD SERVICE
