@@ -10,6 +10,7 @@ encryption_key=$(ynh_string_random --length=32)
 nextauth_secret=$(ynh_string_random --length=32)
 cron_secret=$(ynh_string_random --length=32)
 cubejs_api_secret=$(ynh_string_random --length=32)
+
 ynh_app_setting_set --key=encryption_key --value=$encryption_key
 ynh_app_setting_set --key=nextauth_secret --value=$nextauth_secret
 ynh_app_setting_set --key=cron_secret --value=$cron_secret

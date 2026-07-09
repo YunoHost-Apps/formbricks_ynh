@@ -18,13 +18,12 @@ admindoc = "https://formbricks.com/docs/developer-docs/contributing/get-started#
 code = "https://github.com/formbricks/formbricks"
 
 [integration]
-yunohost = ">= 12.0.9"
+yunohost = ">= 12.1.40"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
 
 ldap = false
-
 sso = false
 
 disk = "50M"
@@ -46,8 +45,7 @@ ram.runtime = "50M"
     [resources.sources.main]
     url = "https://github.com/formbricks/formbricks/archive/refs/tags/5.1.4.tar.gz"
     sha256 = "bc112f2a95edf06c440a68459f434012aa989e8fd8f702887a178323667dad10"
-
-    # autoupdate.strategy = "latest_github_tag"
+    autoupdate.strategy = "latest_github_tag"
 
     [resources.system_user]
     allow_email = true
