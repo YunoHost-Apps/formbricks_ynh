@@ -53,7 +53,7 @@ ynh_script_progression "Installing the app..."
 
 pushd $install_dir
     ynh_exec_as_app pnpm install
-    ynh_exec_as_app --max-old-size=8192 TURBO_TELEMETRY_DISABLED=1 pnpm build
+    ynh_exec_as_app --max_old_space_size=8192 TURBO_TELEMETRY_DISABLED=1 pnpm build
     ynh_exec_as_app TURBO_TELEMETRY_DISABLED=1 pnpm turbo run db:setup
 popd
 
